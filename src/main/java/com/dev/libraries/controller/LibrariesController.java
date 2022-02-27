@@ -1,5 +1,7 @@
 package com.dev.libraries.controller;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +27,11 @@ import com.dev.libraries.dto.LibrarieDto;
 import com.dev.libraries.model.LibrariesModel;
 import com.dev.libraries.service.LibrarieService;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+
 @RestController
 @RequestMapping("/libraries")
 public class LibrariesController {
@@ -39,15 +46,15 @@ public class LibrariesController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("libraries not found.");
 		}
 		librariesModel.get()
-				.add(linkTo(methodOn(LibrariesController.class).getAllLibraries()).withRel("book list"));
+				.add(linkTo(methodOn(LibrariesController.class).getAllLibraries(null)).withRel("book list"));
 		return ResponseEntity.status(HttpStatus.OK).body(librariesModel.get());
 	}
 
 	@GetMapping
-	public ResponseEntity<List<LibrariesModel>> getAllLibraries() {
-		List<LibrariesModel> librariesList = service.findAll();
+	public ResponseEntity<Page<LibrariesModel>> getAllLibraries(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+		Page<LibrariesModel> librariesList = service.findAll(pageable);
 		if (librariesList.isEmpty()) {
-			return new ResponseEntity<List<LibrariesModel>>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Page<LibrariesModel>>(HttpStatus.NOT_FOUND);
 		} else {
 			for (LibrariesModel libraries : librariesList) {
 				long id = libraries.getId();
@@ -55,12 +62,15 @@ public class LibrariesController {
 
 			}
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
+		return ResponseEntity.status(HttpStatus.OK).body(service.findAll(pageable));
 	}
 
 	@PostMapping
-	public ResponseEntity<Object> saveLibraries(@Valid @RequestBody LibrariesModel libraries) {
-		return ResponseEntity.status(HttpStatus.OK).body(service.save(libraries));
+	public ResponseEntity<Object> saveLibraries(@Valid @RequestBody LibrarieDto librariesDto) {
+		LibrariesModel librarieModel = new LibrariesModel();
+		BeanUtils.copyProperties(librariesDto, librarieModel);
+		librarieModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
+		return ResponseEntity.status(HttpStatus.OK).body(service.save(librarieModel));
 
 	}
 
@@ -74,6 +84,7 @@ public class LibrariesController {
 		LibrariesModel librarieModel = new LibrariesModel();
 		BeanUtils.copyProperties(librariesDto, librarieModel);
 		librarieModel.setId(librariesModel.get().getId());
+		librarieModel.setRegistrationDate(librariesModel.get().getRegistrationDate());
 		return ResponseEntity.status(HttpStatus.OK).body(service.save(librarieModel));
 	}
 

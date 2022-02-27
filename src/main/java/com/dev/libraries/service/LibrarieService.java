@@ -1,9 +1,10 @@
 package com.dev.libraries.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dev.libraries.model.LibrariesModel;
@@ -23,8 +24,8 @@ public class LibrarieService {
 		return librariesRepository.save(libraries);
 	}
 
-	public List<LibrariesModel> findAll() {
-		return librariesRepository.findAll();
+	public Page <LibrariesModel> findAll(Pageable pageable) {
+		return librariesRepository.findAll(pageable);
 	}
 
 	public void delete(LibrariesModel librariesModel) {

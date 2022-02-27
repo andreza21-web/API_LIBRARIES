@@ -1,6 +1,7 @@
 package com.dev.libraries.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,15 +34,20 @@ public class LibrariesModel extends RepresentationModel<LibrariesModel> implemen
 	@Column(nullable = false, length = 130)
 	private String genero;
 
+	@Column(nullable = false, length = 130)
+	private LocalDateTime registrationDate;
+
 	public LibrariesModel() {
 	}
 
-	public LibrariesModel(Long id, String title, String author, String isbn, String genero) {
+	public LibrariesModel(Long id, String title, String author, String isbn, String genero,
+			LocalDateTime registrationDate) {
 		this.id = id;
 		this.title = title;
 		this.author = author;
 		this.isbn = isbn;
 		this.genero = genero;
+		this.registrationDate = registrationDate;
 	}
 
 	public Long getId() {
@@ -84,8 +90,12 @@ public class LibrariesModel extends RepresentationModel<LibrariesModel> implemen
 		this.genero = genero;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public LocalDateTime getRegistrationDate() {
+		return registrationDate;
+	}
+
+	public void setRegistrationDate(LocalDateTime registrationDate) {
+		this.registrationDate = registrationDate;
 	}
 
 }
