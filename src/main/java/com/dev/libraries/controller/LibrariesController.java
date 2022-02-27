@@ -69,7 +69,7 @@ public class LibrariesController {
 		LibrariesModel librarieModel = new LibrariesModel();
 		BeanUtils.copyProperties(librariesDto, librarieModel);
 		librarieModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
-		return ResponseEntity.status(HttpStatus.OK).body(service.save(librarieModel));
+		return ResponseEntity.status(HttpStatus.CREATED).body(service.save(librarieModel));
 
 	}
 
