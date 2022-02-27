@@ -1,17 +1,20 @@
 package com.dev.libraries.controller;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.List;
-import java.util.Optional;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,11 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dev.libraries.dto.LibrarieDto;
 import com.dev.libraries.model.LibrariesModel;
 import com.dev.libraries.service.LibrarieService;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 
 @RestController
 @RequestMapping("/libraries")
@@ -51,7 +49,8 @@ public class LibrariesController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<LibrariesModel>> getAllLibraries(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+	public ResponseEntity<Page<LibrariesModel>> getAllLibraries(
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 		Page<LibrariesModel> librariesList = service.findAll(pageable);
 		if (librariesList.isEmpty()) {
 			return new ResponseEntity<Page<LibrariesModel>>(HttpStatus.NOT_FOUND);
