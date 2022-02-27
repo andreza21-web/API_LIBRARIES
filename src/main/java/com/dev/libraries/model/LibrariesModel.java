@@ -9,9 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.hateoas.RepresentationModel;
+
 @Entity
 @Table(name = "Libraries")
-public class LibrariesModel  implements Serializable {
+public class LibrariesModel extends RepresentationModel<LibrariesModel> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

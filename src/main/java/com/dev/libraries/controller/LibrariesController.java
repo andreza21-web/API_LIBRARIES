@@ -1,6 +1,10 @@
 package com.dev.libraries.controller;
 
+import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import javax.validation.Valid;
 
@@ -34,12 +38,24 @@ public class LibrariesController {
 		if (!librariesModel.isPresent()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("libraries not found.");
 		}
+		librariesModel.get()
+				.add(linkTo(methodOn(LibrariesController.class).getAllLibraries()).withRel("book list"));
 		return ResponseEntity.status(HttpStatus.OK).body(librariesModel.get());
 	}
 
 	@GetMapping
-	public ResponseEntity<Object> getAllLibraries(LibrariesModel libraries) {
-		return ResponseEntity.status(HttpStatus.OK).body(service.findAll(libraries));
+	public ResponseEntity<List<LibrariesModel>> getAllLibraries() {
+		List<LibrariesModel> librariesList = service.findAll();
+		if (librariesList.isEmpty()) {
+			return new ResponseEntity<List<LibrariesModel>>(HttpStatus.NOT_FOUND);
+		} else {
+			for (LibrariesModel libraries : librariesList) {
+				long id = libraries.getId();
+				libraries.add(linkTo(methodOn(LibrariesController.class).getOneLibraries(id)).withSelfRel());
+
+			}
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
 	}
 
 	@PostMapping
@@ -68,6 +84,6 @@ public class LibrariesController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Libraries not found.");
 		}
 		service.delete(librariesModel.get());
-		return ResponseEntity.status(HttpStatus.OK).body("Librarie deleted successfully.");
+		return ResponseEntity.status(HttpStatus.OK).body("Libraries deleted successfully.");
 	}
 }

@@ -23,7 +23,7 @@ public class LibrarieService {
 		return librariesRepository.save(libraries);
 	}
 
-	public List<LibrariesModel> findAll(LibrariesModel libraries) {
+	public List<LibrariesModel> findAll() {
 		return librariesRepository.findAll();
 	}
 
